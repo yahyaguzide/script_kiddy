@@ -65,7 +65,7 @@ void Delete( int (*fpt_compare)(void*, void*), list *l, void *data ){
     element elem = l->head, prelem = NULL;
 
     for( int i= 0, i < l->length && elem != NULL; i++, elem = elem->next ){
-        if( fpt_compare(*data, *elem->data) == 0 ){
+        if( fpt_compare(data, elem->data) == 0 ){
             if( !prelem )
                 l->head = elem->next;
             else

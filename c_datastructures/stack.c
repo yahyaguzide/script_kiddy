@@ -2,11 +2,11 @@
 #include <stdio.h>
 
 /*****************************************************************
-//  queque
+//  stack.c
 //
 // date: 24.10.2019
 // name: Yahya Guezide
-// Simple queque with help of linkedlist
+// Simple Stack with the help of LinkedList
 //
 *****************************************************************/
 
@@ -14,14 +14,14 @@ typedef struct _element element;
 typedef struct _list list;
 
 void InitList(list*);
-void Add(list*, void*);
+void AddHead(list*, void*);
 void Delete( int (*fpt_compare)(void*,void*), list*, void* );
 
-void AddQue( list *l, elment *elem ){
-    Add( l, elem );
+void PushStack( list *l, void *data ){
+    AddHead(l, data);
 }
 
-void* PopQue( list *l ){
+void* PopStack( list *l ){
     if( l == NULL || l->head == NULL )
         return void;
 
@@ -32,3 +32,5 @@ void* PopQue( list *l ){
     free(tmp);
     return tmpdata;
 }
+
+
