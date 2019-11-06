@@ -24,7 +24,7 @@ typedef struct _person{
 }Person;
 
 typedef struct _employee{
-	Person person;
+	Person *person;
 	int employeeIndex;
 	void (*SetEmIndex)(void*, int);
 	int (*GetEmIndex)(void*);
@@ -33,7 +33,7 @@ typedef struct _employee{
 
 //####### Person Functions ########
 void PrintPerson( Person *p ){
-	printf( "Peson:\t%s\n", p->name);
+	printf( "Person:\t%s\n", p->name);
 }
 
 void SetNamePerson( Person *p, char *name ){
@@ -60,7 +60,7 @@ void FreePerson( Person *p ){
 
 //########## Employee Functions ########
 void PrintEmployee( Employee *em ){
-	printf( "Employee:\t%d\t%s", em->employeeIndex, em->person.name);
+	printf( "Employee:\t%d\t%s\n", em->employeeIndex, em->person->name);
 }
 
 void SetNameEmployee( Employee *em, char *name ){
@@ -107,17 +107,31 @@ Employee *GetEmployeeInstance( int i ){
 	em->GetEmIndex = GetIndex;
 
 	em->person = (Person*)malloc(sizeof(Person));
-	em->person.name = NULL;
+	em->person->name = NULL;
 
-	em->person.functions.Print = PrintEmployee;
-	em->person.functions.SetName = SetNameEmployee;
-	em->person.functions.GetName = GetNameEmployee;
-	em->person.functions.Free = FreeEmployee;
+	em->person->functions.Print = PrintEmployee;
+	em->person->functions.SetName = SetNameEmployee;
+	em->person->functions.GetName = GetNameEmployee;
+	em->person->functions.Free = FreeEmployee;
 	return em;
 }
 
 
 int main( int argc, char **argv ){
+	Person *p = GetPersonInstance();
+	Employee *em = GetEmployeeInstance(0);
+
+	p->functions.SetName(p, "Steve");
+	p->functions.Print(p);
+
+	em->person->functions.SetName(em, "Bob");
+	em->person->functions.Print(em);
+
+	em->SetEmIndex(em, 1);
+	em->person->functions.Print(em);
+
+	p->functions.Free(p);
+	em->person->functions.Free(em);
 
     return 0;
 }
