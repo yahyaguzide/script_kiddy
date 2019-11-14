@@ -12,12 +12,19 @@
 //
 *****************************************************************/
 
+// NOTE: maybe some kind of ErrMsg on the ErrStream would be good
+
 typedef struct _list list;
 
 void List_Init( list *l ){
+	if( !l )
+		return;
+
     l->head = NULL;
     l->tail = NULL;
     l->length = 0;
+
+    l->Free = NULL;
 }
 
 list* List_Create(){
@@ -27,10 +34,11 @@ list* List_Create(){
 }
 
 void List_AddHead( list *l, void *data ){
-    if( l == NULL || data == NULL )
+    element *elem = (element*)malloc(sizeof(element));
+
+    if( !l || !data || !elem )
         return;
 
-    element *elem = (element*)malloc(sizeof(element));
     elem->next = l->head;
     l->head = elem;
 
@@ -42,7 +50,7 @@ void List_AddHead( list *l, void *data ){
 }
 
 void List_AddTail( list *l, void *data ){
-    if( l == NULL || data == NULL )
+    if( !l || !data )
         return;
 
     element *elem = (element*)malloc(sizeof(element));
@@ -63,7 +71,7 @@ int List_GetLength( list *l ){
 }
 
 element* List_GetElem( list *l, int index ){
-	if( l->length <= index && !l )
+	if( l->length <= index || !l )
 		return NULL;
 
 	element *elem = l->head;
@@ -72,8 +80,8 @@ element* List_GetElem( list *l, int index ){
 	return elem;
 }
 
-void* List_InList( list *l, element *sElem ){
-	if( !l && !sElem )
+static void* List_InList( list *l, element *sElem ){
+	if( !l || !sElem )
 		return NULL;
 
 	if( l->head == sElem )
@@ -86,10 +94,17 @@ void* List_InList( list *l, element *sElem ){
 	return NULL;
 }
 
+void List_Clone( list *l ){
+	if( !l )
+		return;
+	//TODO: write List_Clone
+	//and think if i realy need it
+}
+
 void List_Delete( list *l, element *dElem ){
 	void *preElem;
 	element *tmp;
-	if( !l && !dElem && !(preElem= List_InList( l, dElem )) )
+	if( !l || !dElem || !(preElem= List_InList( l, dElem )) )
 		return;
 
 	// The given Element is the Head
@@ -101,5 +116,24 @@ void List_Delete( list *l, element *dElem ){
 		((element*)preElem)->next = tmp->next;
 	}
 	l->length--;
-	free(tmp);
+
+	// If a Free function was given use it else use
+	// the Free function of every Element
+	if( l->Free )
+		l->Free(&tmp);
+	else
+		tmp->Free(&tmp);
 }
+
+
+// Make List Element polymorphible?! let user give a Free Function!!
+void List_Free( list **l ){
+	while( (*l)->length > 0 ){
+		(*l)->length -= 1;
+		List_Delete( *l, List_GetElem( *l, (*l)->length ) );
+	}
+	
+	free(*l);
+	*l = NULL;
+}
+

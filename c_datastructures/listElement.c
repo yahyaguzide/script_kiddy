@@ -16,6 +16,7 @@ typedef struct _element element;
 void Element_Init( element *elem ){
 	elem->data = NULL;
 	elem->next = NULL;
+	elem->Free = Element_Free;
 }
 
 element* Element_Create(){
@@ -32,7 +33,7 @@ void* Element_GetData( element *elem ){
 	return elem->data;
 }
 
-void Element_UpdateData( element *elem, void *data ){
+void Element_Update( element *elem, void *data ){
 	if( !elem && !data )
 		return;
 
@@ -40,6 +41,11 @@ void Element_UpdateData( element *elem, void *data ){
 		free(elem->data);
 
 	elem->data = data;
+}
+
+element* Element_Clone( element *elem ){
+	//TODO: write Element_Clone
+	//and think if a realy need it...
 }
 
 void Element_Free( element **elem ){

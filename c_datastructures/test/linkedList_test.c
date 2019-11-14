@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "include/linkedList.h"
+#include "../include/linkedList.h"
 
 int main(){
 
@@ -23,6 +23,10 @@ int main(){
 
 	printf(" l1: %d l2: %d\n", *((int*)List_GetElem(l2, 0)->data), *((int*)List_GetElem(l2, 0)->data));
 
+	List_Free( &l1 );
+	List_Free( &l2 );
+
+	printf( "Pointer\nl1: %p l2: %p\n", l1, l2 );
 
 
 	return 0;
